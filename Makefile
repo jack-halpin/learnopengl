@@ -1,5 +1,5 @@
 CC=clang++
 CFLAGS=-I/Users/jack/Documents/third_party/glad/include
 
-glfwmain: main.cpp glad.cpp
-	$(CC) -o glfwmain main.cpp glad.cpp -lglfw $(CFLAGS)
+glfwmain: src/main.cpp src/glad.cpp
+	$(CC) -o bin/glfwmain.out src/main.cpp src/glad.cpp -lglfw $(CFLAGS)
