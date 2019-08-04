@@ -10,7 +10,26 @@ set (learnopengl_VERSION_MINOR 0)
 # using file(GLOB...) we can have wildcard additions
 file(GLOB SOURCES "src/*.cpp")
 
+#find_path(GLFW_INCLUDE_DIR
+#    NAMES include
+#    PATH_SUFFIXES "include" "glfw" "3.3"
+#)
+#message("glfw include: ${GLFW_INCLUDE_DIR}")
+#find_library(GLFW_LIB glfw)
+
 # add include directories
 include_directories(include)
 
-add_executable(learnopengl $(SOURCES)) 
+find_package(glfw3)
+
+
+
+add_executable(learnopengl ${SOURCES}) 
+target_link_libraries(learnopengl glfw)
+
+message("System: ${CMAKE_SYSTEM_PREFIX_PATH}")
+
+# find the include files for the glfw lib
+
+# link to the glfw libs
+message("lib: ${GLFW_LIB}")
