@@ -34,7 +34,7 @@ int main()
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    int b = 3;    
+
     // glad: load all OpenGL function pointers
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -53,6 +53,28 @@ int main()
         
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
+        
+        // Defining 3D vertices for our triangle.
+        // NOTE: Since we want the traingle to be in 2D space the Z coordinate is left to
+        // be 0.0f
+        float vertices[] = {
+            -0.5f, 0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            0.0f, 0.5f, 0.0f
+        };
+        
+        // Next we create a buffer to store the vertices in on the GC
+        uint32_t VBO;
+        glGenBuffers(1, &VBO);
+        
+        // Bind to the buffer. When we bind to the buffer, any future buffer manipulation calls
+        // we make will be done on the buffer we have bound do. NOTE: we can bind to one buffer of each type
+        // In this case we are using the GL_ARRAY_BUFFER type
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        
+        glClearColor(0.2f, 0.2f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
