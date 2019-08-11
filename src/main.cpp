@@ -65,38 +65,7 @@ int main()
         return -1;
     }
     
-    // For the sake of drawing constant vertices we can define these here
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // left
-        0.5f, -0.5f, 0.0f, // right
-        0.0f,  0.5f, 0.0f  // top
-    };
-    
-    // Create a VAO
-    unsigned int VAO;
-    glGenVertexArrays(1, &VAO);
-    // Next we create a buffer to store the vertices in on the GC
-    
-    uint32_t VBO;
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-    
-    
-    
-    // Bind to the buffer. When we bind to the buffer, any future buffer manipulation calls
-    // we make will be done on the buffer we have bound do. NOTE: we can bind to one buffer of each type
-    // In this case we are using the GL_ARRAY_BUFFER type
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // We need to tell OpenGL how to interpret the vertex data in teh VBO
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    
-    glBindVertexArray(0);
-    
-
+    // 1. Create shaders and OpenGL program
     //Create vertex shader object and compile it
     unsigned int vertexShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -132,7 +101,7 @@ int main()
     // Create a shader program that links the shaders together.
     unsigned int shaderProgram;
     shaderProgram = glCreateProgram();
-
+    
     // Set the shaders for that program
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
@@ -152,8 +121,47 @@ int main()
     glDeleteShader(fragmentShader);
     
     
+    // 2. Create VBO and VAO objects
     
+    // For the sake of drawing constant vertices we can define these here
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f, // left
+        0.5f, -0.5f, 0.0f, // right
+        0.0f,  0.5f, 0.0f  // top
+    };
     
+    // Note on vertex array objects (VAO). In the vertex shader, we must manually define
+    // how vertex attributes (x, y and z coordinates) are layed out in our buffer.
+    // For the set of vertices defined above we would expect each vertex to take up 3 * 4 = 12 bytes.
+    // In the buffer the floats of the vertices are arranged as (X | Y | Z) (X | Y | Z) ...
+    // The vertices in this case are tightly packed into the buffer. We have to specify this layout
+    // using a VAO. We do so as such:
+    
+    // Create a VAO
+    unsigned int VAO;
+    glGenVertexArrays(1, &VAO);
+    
+    // Next we create a vertex buffer object (VBO) in order to store our vertices into.
+    uint32_t VBO;
+    glGenBuffers(1, &VBO);
+
+    // We call this before setting up the buffer and the vertex attributes. By doing so the
+    // VAO object becomes bound to configuration of the buffer and the vertex attributes that we
+    // define after it.
+    glBindVertexArray(VAO);
+    
+    // Bind to the buffer. When we bind to the buffer, any future buffer manipulation calls
+    // we make will be done on the buffer we have bound to. NOTE: we can bind to one buffer of each type
+    // In this case we are using the GL_ARRAY_BUFFER type
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // Now we tell OpenGL how to interpret the vertex data in this VBO
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    
+    // The buffer and the vertex attributes have been bound to VAO. We can unbind now.
+    glBindVertexArray(0);
     
     // render loop
     // -----------
@@ -166,16 +174,14 @@ int main()
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         
-        // Defining 3D vertices for our triangle.
-        // NOTE: Since we want the traingle to be in 2D space the Z coordinate is left to
-        // be 0.0f
-        
+        // NOTE: we have to say which program and which VAO to use everytime we render.
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         
         glClearColor(0.2f, 0.2f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
+        // Draw the triangle.
         glDrawArrays(GL_TRIANGLES, 0, 3);
         
         glfwSwapBuffers(window);
