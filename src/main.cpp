@@ -1,3 +1,5 @@
+// Same as main.cpp except we are using EBO
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -14,7 +16,7 @@ const unsigned int SCR_HEIGHT = 600;
  Here we define the vertex shader. The vertex shader is the first step in teh OpenGL graphics
  pipeline. The shader allows us to transform the vertices we pass into it if need be. For now,
  this shader simply outputs the same values that we pass into it
-*/
+ */
 
 const char *vertexShaderSource =
 "#version 330 core\n"
@@ -56,7 +58,7 @@ int main()
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
+    
     // glad: load all OpenGL function pointers
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -125,9 +127,14 @@ int main()
     
     // For the sake of drawing constant vertices we can define these here
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // left
-        0.5f, -0.5f, 0.0f, // right
-        0.0f,  0.5f, 0.0f  // top
+        0.5f,  0.5f, 0.0f,  // top right
+        0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left
+    };
+    unsigned int indices[] = {  // note that we start from 0!
+        0, 1, 3,  // first Triangle
+        1, 2, 3   // second Triangle
     };
     
     // Note on vertex array objects (VAO). In the vertex shader, we must manually define
@@ -144,7 +151,12 @@ int main()
     // Next we create a vertex buffer object (VBO) in order to store our vertices into.
     uint32_t VBO;
     glGenBuffers(1, &VBO);
-
+    
+    // EBO: Create EBO
+    uint32_t EBO;
+    glGenBuffers(1, &EBO);
+    
+    
     // We call this before setting up the buffer and the vertex attributes. By doing so the
     // VAO object becomes bound to configuration of the buffer and the vertex attributes that we
     // define after it.
@@ -155,13 +167,19 @@ int main()
     // In this case we are using the GL_ARRAY_BUFFER type
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    
     // Now we tell OpenGL how to interpret the vertex data in this VBO
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
     // The buffer and the vertex attributes have been bound to VAO. We can unbind now.
     glBindVertexArray(0);
+    
     
     // render loop
     // -----------
@@ -182,8 +200,8 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         
         // Draw the triangle.
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
