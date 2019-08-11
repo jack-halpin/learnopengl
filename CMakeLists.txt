@@ -4,6 +4,8 @@ project (learnopengl)
 set (learnopengl_VERSION_MAJOR 1)
 set (learnopengl_VERSION_MINOR 0)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
+
 # set the source files
 # set (SOURCES src/main.cpp src/glad.cpp)
 
@@ -24,8 +26,8 @@ find_package(glfw3)
 
 
 
-add_executable(learnopengl ${SOURCES}) 
-target_link_libraries(learnopengl glfw)
+add_executable(helloTriangle.out ${SOURCES}) 
+target_link_libraries(helloTriangle.out glfw)
 
 message("System: ${CMAKE_SYSTEM_PREFIX_PATH}")
 
