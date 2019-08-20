@@ -3,7 +3,7 @@
 Following the tutorials from www.learnopengl.com and learning some handy tools like vim and CMake
 along the way!
 
-##build
+## build
 From the source directory
 
 ```
