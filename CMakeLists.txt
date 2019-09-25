@@ -10,6 +10,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 set (GETSTARTED src/getting_started.cpp src/glad.cpp)
 set (GETSTARTED1 src/getting_started1.cpp src/glad.cpp)
 set (GETSTARTEDEX1 src/getting_started_ex1.cpp src/glad.cpp)
+set (GETSTARTEDEX2 src/getting_started_ex2.cpp src/glad.cpp)
 # using file(GLOB...) we can have wildcard additions
 #file(GLOB SOURCES "src/*.cpp")
 
@@ -37,6 +38,10 @@ target_link_libraries(getting_started1.out glfw)
 # Getting started ex1
 add_executable(getting_started_ex1.out "${GETSTARTEDEX1}")
 target_link_libraries(getting_started_ex1.out glfw)
+
+# Getting started ex2
+add_executable(getting_started_ex2.out "${GETSTARTEDEX2}")
+target_link_libraries(getting_started_ex2.out glfw)
 
 message("System: ${CMAKE_SYSTEM_PREFIX_PATH}")
 
