@@ -13,6 +13,10 @@ set (GETSTARTEDEX1 src/getting_started_ex1.cpp src/glad.cpp)
 set (GETSTARTEDEX2 src/getting_started_ex2.cpp src/glad.cpp)
 set (GETSTARTEDEX3 src/getting_started_ex3.cpp src/glad.cpp)
 set (SHADERS src/shaders.cpp src/glad.cpp)
+set (SHADERSEX1 src/shaders_ex1.cpp src/glad.cpp)
+set (SHADERSEX2 src/shaders_ex2.cpp src/glad.cpp)
+set (TEXTURES src/textures.cpp src/glad.cpp)
+set (TEXTURESEX1 src/textures_ex1.cpp src/glad.cpp)
 # using file(GLOB...) we can have wildcard additions
 #file(GLOB SOURCES "src/*.cpp")
 
@@ -52,6 +56,19 @@ target_link_libraries(getting_started_ex3.out glfw)
 # Shaders chapter
 add_executable(shaders_chapter.out "${SHADERS}")
 target_link_libraries(shaders_chapter.out glfw)
+
+# Shaders ex1
+add_executable(shaders_ex1.out "${SHADERSEX1}")
+target_link_libraries(shaders_ex1.out glfw)
+
+add_executable(shaders_ex2.out "${SHADERSEX2}")
+target_link_libraries(shaders_ex2.out glfw)
+
+add_executable(textures_chapter.out "${TEXTURES}")
+target_link_libraries(textures_chapter.out glfw)
+
+add_executable(textures_ex1.out "${TEXTURESEX1}")
+target_link_libraries(textures_ex1.out glfw)
 
 message("System: ${CMAKE_SYSTEM_PREFIX_PATH}")
 
