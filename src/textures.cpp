@@ -192,9 +192,12 @@ int main()
     // The buffer and the vertex attributes have been bound to VAO. We can unbind now.
     glBindVertexArray(0);
     
+    
+    // Note about assigning texture units. Default assigned unit to a sampler2d (shader)
+    // default active unit is always 0.
     s.use();
     glUniform1i(glGetUniformLocation(s.m_shaderProgram, "texture1"), 0);
-    glUniform1i(glGetUniformLocation(s.m_shaderProgram, "texture2"), 1);
+    glUniform1i(glGetUniformLocation(s.m_shaderProgram, "texture1"), 1);
 
     // render loop
     // -----------
