@@ -197,7 +197,7 @@ int main()
     // default active unit is always 0.
     s.use();
     glUniform1i(glGetUniformLocation(s.m_shaderProgram, "texture1"), 0);
-    glUniform1i(glGetUniformLocation(s.m_shaderProgram, "texture1"), 1);
+    glUniform1i(glGetUniformLocation(s.m_shaderProgram, "texture2"), 1);
 
     // render loop
     // -----------
