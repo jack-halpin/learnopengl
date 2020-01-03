@@ -78,7 +78,7 @@ int main()
     }
     
     
-    Shader s("../../src/shaders/vertex_shader_texture.vs", "../../src/shaders/fragment_shader_texture.fs");
+    Shader s("../../src/shaders/vertex_shader_texture_ex1.vs", "../../src/shaders/fragment_shader_texture_ex1.fs");
     
     
     // CREATE TEXTURE
