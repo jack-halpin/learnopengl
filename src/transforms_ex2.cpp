@@ -209,11 +209,13 @@ int main()
 //        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
 //        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.
         
-        trans = glm::mat4(1.0f);
-        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
-        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        glm::mat4 trans1 = glm::mat4(1.0f);
         
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
+        trans1 = glm::translate(trans1, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans1 = glm::rotate(trans1, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        trans1 = glm::scale(trans1, glm::vec3(0.5f, 0.5f, 0.5f));
+        
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans1));
         
         
         glClearColor(0.2f, 0.2f, 0.3f, 1.0f);
@@ -229,6 +231,15 @@ int main()
         
         
         // Draw the triangle.
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        
+        glm::mat4 trans2 = glm::mat4(1.0f);
+        
+        trans2 = glm::translate(trans2, glm::vec3(-0.5f, 0.5f, 0.0f));
+        trans2 = glm::rotate(trans2, -(float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        trans2 = glm::scale(trans2, glm::vec3(0.5f, 0.5f, 0.5f));
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans2));
+        
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         
         glfwSwapBuffers(window);
