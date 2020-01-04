@@ -19,6 +19,7 @@ set (TEXTURES src/textures.cpp src/glad.cpp)
 set (TEXTURESEX1 src/textures_ex1.cpp src/glad.cpp)
 set (TEXTURESEX2 src/textures_ex2.cpp src/glad.cpp)
 set (TEXTURESEX4 src/textures_ex4.cpp src/glad.cpp)
+set (TRANSFORMS src/transforms.cpp src/glad.cpp)
 # using file(GLOB...) we can have wildcard additions
 #file(GLOB SOURCES "src/*.cpp")
 
@@ -77,6 +78,9 @@ target_link_libraries(textures_ex2.out glfw)
 
 add_executable(textures_ex4.out "${TEXTURESEX4}")
 target_link_libraries(textures_ex4.out glfw)
+
+add_executable(transforms_chapter.out "${TRANSFORMS}")
+target_link_libraries(transforms_chapter.out glfw)
 
 message("System: ${CMAKE_SYSTEM_PREFIX_PATH}")
 
