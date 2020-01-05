@@ -17,6 +17,9 @@
 #include <iostream>
 #include <unistd.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 class Shader
 {
 public:
@@ -93,7 +96,7 @@ public:
         }
         
         // Create a shader program that links the shaders together.
-        m_shaderProgram = glCreateProgram();
+        ID = m_shaderProgram = glCreateProgram();
         
         // Set the shaders for that program
         glAttachShader(m_shaderProgram, vertexShader);
@@ -132,7 +135,13 @@ public:
     {
         glUniform1f(glGetUniformLocation(m_shaderProgram, name.c_str()), value);
     }
+    void setMat4(const std::string &name, glm::mat4 matrix) const
+    {
+        glUniformMatrix4fv(glGetUniformLocation(m_shaderProgram, name.c_str())
+                           , 1, GL_FALSE, glm::value_ptr(matrix));
+    }
     unsigned int m_shaderProgram;
+    unsigned int ID;
 };
 
 
