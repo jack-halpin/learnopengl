@@ -12,3 +12,6 @@ cd build
 cmake -G Xcode ..
 ```
 
+Worth noting that `GLFW` installed using homebrew doesn't seem to work with cmake as I would expect. 
+However compiling the libraries manually and installing them using `make` allows it to work just fine.
+
