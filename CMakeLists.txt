@@ -98,3 +98,9 @@ message("System: ${CMAKE_SYSTEM_PREFIX_PATH}")
 
 # link to the glfw libs
 message("lib: ${GLFW_LIB}")
+
+
+
+# NOTE: this is a refresher project should not commit
+add_executable(refresher "${GETSTARTED}")
+target_link_libraries(refresher "${GLFW_LIB}")

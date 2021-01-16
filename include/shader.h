@@ -15,7 +15,8 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <unistd.h>
+#include <filesystem>
+//#include <unistd.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -27,11 +28,12 @@ public:
     Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
     {
         char buffer[256];
-        char *answer = getcwd(buffer, sizeof(buffer));
+		std::filesystem::path currentDirectory = std::filesystem::current_path();
+		std::string path = currentDirectory.generic_string();
         std::string s_cwd;
-        if (answer)
+        if (!path.empty())
         {
-            s_cwd = answer;
+            s_cwd = path;
         }
         
         std::string vertexCode;
