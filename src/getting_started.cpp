@@ -15,6 +15,7 @@
 #include <filesystem>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void processInput(GLFWwindow *window);
 
 // settings
@@ -22,6 +23,21 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 static float g_mixValue = 0.0f;
+
+// Camera globals
+glm::vec3 direction;
+static float yaw = -90.0f;
+static float pitch = 0.0f;
+float lastX = 400, lastY = 300;
+bool firstMouse = true;
+
+// Calculate camera postiion
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+float deltaTime = 0.0f;	// Time between current frame and last frame
+float lastFrame = 0.0f; // Time of last frame
 
 int main()
 {
@@ -47,7 +63,8 @@ int main()
 	}
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetCursorPosCallback(window, mouse_callback);
 
 	// glad: load all OpenGL function pointers
 	// ---------------------------------------
@@ -234,6 +251,20 @@ int main()
 	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
+
+		
+		direction.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+		direction.y = sin(glm::radians(pitch));
+		direction.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+		cameraFront = glm::normalize(direction);
+
+
+
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+
 		// input
 		// -----
 		processInput(window);
@@ -246,7 +277,25 @@ int main()
 		greenValue = horizontalOffset = (tan(timeValue) / 2.0f) + 0.5f;
 
 		
+		glm::vec3 cameraTarget(0.0f, 0.0f, 0.0f);
+		//We normalize here because we only care about direction so we want a unit vector
+		glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
 
+		// We have direction vector, now we need right vector. We can initially get this by doing cross
+		// product with a vector pointing straight up
+		glm::vec3 up(0.0f, 1.0f, 0.0f);
+
+		// Now actual cameraUp is a cross product of direction and right axis
+
+		// Lookat
+		// Rotate the lookat around the origin
+		//const float radius = 10.0f;
+		//float camX = sin(glfwGetTime()) * radius;
+		//float camZ = cos(glfwGetTime()) * radius;
+
+		//glm::mat4 view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		
+		glm::mat4 view = glm::lookAt(glm::vec3(cameraPos), cameraPos + cameraFront, cameraUp);
 
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -274,11 +323,12 @@ int main()
 		{
 			glm::mat4 model = glm::mat4(1.0f); // 4x4 identify matrix
 			model = glm::translate(model, cubePositions[i]);
+			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -50.0f));
 			model = glm::rotate(model, glm::radians(20.0f * i), glm::vec3(0.5f, 1.0f, 0.0f));
 
-			glm::mat4 view = glm::mat4(1.0f); // 4x4 identify matrix
-			view = glm::translate(view, glm::vec3(0.0, -0.5, -3.0));
-			view = glm::rotate(view, glm::radians(10.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			//glm::mat4 view = glm::mat4(1.0f); // 4x4 identify matrix
+			//view = glm::translate(view, glm::vec3(0.0, -0.5, -3.0));
+			//view = glm::rotate(view, glm::radians(10.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
 
 
@@ -335,6 +385,16 @@ void processInput(GLFWwindow *window)
 		}
 	}
 		
+
+	float cameraSpeed = 2.5f * deltaTime;
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		cameraPos += cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		cameraPos -= cameraSpeed * cameraFront;
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -344,4 +404,31 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
+}
+
+void mouse_callback(GLFWwindow * window, double xpos, double ypos)
+{
+	if (firstMouse) // initially set to true
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
+	lastX = xpos;
+	lastY = ypos;
+
+	const float sensitivity = 0.1f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	if (pitch > 89.0f)
+		pitch = 89.0f;
+	if (pitch < -89.0f)
+		pitch = -89.0f;
 }
