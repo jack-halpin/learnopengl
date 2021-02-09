@@ -193,8 +193,8 @@ int main()
     glBindVertexArray(0);
     
     s.use();
-    glUniform1i(glGetUniformLocation(s.m_shaderProgram, "texture1"), 0);
-    glUniform1i(glGetUniformLocation(s.m_shaderProgram, "texture2"), 1);
+    glUniform1i(glGetUniformLocation(s.ID, "texture1"), 0);
+    glUniform1i(glGetUniformLocation(s.ID, "texture2"), 1);
     s.setFloat("mixValue", gMixValue);
 
     

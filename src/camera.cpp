@@ -323,8 +323,8 @@ int main()
 		{
 			glm::mat4 model = glm::mat4(1.0f); // 4x4 identify matrix
 			model = glm::translate(model, cubePositions[i]);
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
-			model = glm::rotate(model, glm::radians(20.0f * i), glm::vec3(0.5f, 1.0f, 0.0f));
+			//model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
+			//model = glm::rotate(model, glm::radians(20.0f * i), glm::vec3(0.5f, 1.0f, 0.0f));
 
 			//glm::mat4 view = glm::mat4(1.0f); // 4x4 identify matrix
 			//view = glm::translate(view, glm::vec3(0.0, -0.5, -3.0));
