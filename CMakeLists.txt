@@ -28,6 +28,8 @@ set (CAMERA1 src/camera_ex1.cpp src/glad.cpp)
 set (LIGHTING src/lighting.cpp src/glad.cpp)
 set (BASICLIGHTING src/basic_lighting.cpp src/glad.cpp)
 set (BASICLIGHTINGEX3 src/basic_lighting_ex3.cpp src/glad.cpp)
+set (MATERIALS src/materials.cpp src/glad.cpp)
+
 
 
 # using file(GLOB...) we can have wildcard additions
@@ -113,6 +115,11 @@ target_link_libraries(basic_lighting "${GLFW_LIB}")
 
 add_executable(basic_lighting_ex3 "${BASICLIGHTINGEX3}")
 target_link_libraries(basic_lighting_ex3 "${GLFW_LIB}")
+
+add_executable(materials "${MATERIALS}")
+target_link_libraries(materials "${GLFW_LIB}")
+
+
 
 message("System: ${CMAKE_SYSTEM_PREFIX_PATH}")
 
