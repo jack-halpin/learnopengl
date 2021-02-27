@@ -48,7 +48,7 @@ float deltaTime = 0.0f;	// Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
 
-glm::vec3 lightPos(1.2f, 0.5f, -1.0f);
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 
 int main()
@@ -170,7 +170,7 @@ int main()
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
 	// The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-	unsigned char *data = stbi_load("../../resources/crate.png", &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load("../resources/crate.png", &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -197,7 +197,7 @@ int main()
 	//int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
 	// The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-	data = stbi_load("../../resources/crate_specular.png", &width, &height, &nrChannels, 0);
+	data = stbi_load("../resources/crate_specular.png", &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -224,7 +224,7 @@ int main()
 	//int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
 	// The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-	data = stbi_load("../../resources/emission_map.jpg", &width, &height, &nrChannels, 0);
+	data = stbi_load("../resources/emission_map.jpg", &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -327,11 +327,25 @@ int main()
 		objectShader.setVec3("light.diffuse", diffuseColor);
 		objectShader.setVec3("light.specular", glm::vec3(1.0f));
 
+		// Cuttoff angle for spotlight
+		objectShader.setVec3("light.position", camera.Position);
+		objectShader.setVec3("light.direction", camera.Front);
+
+		objectShader.setFloat("light.cutOff", glm::cos(glm::radians(15.0f)));
+		objectShader.setFloat("light.outerCutOff", glm::cos(glm::radians(20.0f)));
+
+
+		objectShader.setFloat("light.constant", 1.0f);
+		objectShader.setFloat("light.linear", 0.09f);
+		objectShader.setFloat("light.quadratic", 0.032f);
+
 		// Set lightPosition
+		//lightPos = glm::vec3(glm::cos(glfwGetTime()), lightPos.y, glm::sin(glfwGetTime()));
 		//lightPos = glm::vec3(glm::cos(glfwGetTime()), lightPos.y, glm::sin(glfwGetTime()));
 
 
-		objectShader.setVec3("lightPos", lightPos);
+		//objectShader.setVec3("lightPos", lightPos);
+		//objectShader.setVec3("light.position", lightPos);
 		objectShader.setVec3("viewPos", camera.Position);
 
 		// Bind textures
@@ -360,29 +374,30 @@ int main()
 		}
 
 
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices));
+		//glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices));
 
-		//POINT LIGHTING
+		// DIRECTIONAL LIGHTING
 		// Light source is infinitely far away so we don't draw it,
 		// we just set a direction vector in the shader
         
-        objectShader.setVec3("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+        //objectShader.setVec3("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
 
+		// POINT Lighing
 		// Draw light source
-		// lightShader.use();
+		 lightShader.use();
 
-		// glm::mat4 model = glm::mat4(1.0f);
-		// model = glm::translate(model, lightPos);
-		// model = glm::scale(model, glm::vec3(0.2f));
+		 glm::mat4 model = glm::mat4(1.0f);
+		 model = glm::translate(model, lightPos);
+		 model = glm::scale(model, glm::vec3(0.2f));
 
-		// lightShader.setMat4("projection", projection);
-		// lightShader.setMat4("view", camera.GetViewMatrix());
-		// lightShader.setMat4("model", model);
+		 lightShader.setMat4("projection", projection);
+		 lightShader.setMat4("view", camera.GetViewMatrix());
+		 lightShader.setMat4("model", model);
 
-		// lightShader.setVec3("lightColor", lightColor);
+		 lightShader.setVec3("lightColor", lightColor);
 
-		// glBindVertexArray(lightVAO);
-		// glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices));
+		 glBindVertexArray(lightVAO);
+		 glDrawArrays(GL_TRIANGLES, 0, sizeof(vertices));
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
