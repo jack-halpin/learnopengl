@@ -30,6 +30,7 @@ set (BASIC_LIGHTING src/Basic_Lighting/basic_lighting.cpp src/glad.cpp)
 set (BASIC_LIGHTING_EX3 src/Basic_Lighting_EX3/basic_lighting_ex3.cpp src/glad.cpp)
 set (MATERIALS src/Materials/materials.cpp src/glad.cpp)
 set (LIGHTING_MAPS src/Lighting_Maps/lighting_maps.cpp src/glad.cpp)
+set (LIGHT_CASTERS src/Light_Casters/light_casters.cpp src/glad.cpp)
 
 # using file(GLOB...) we can have wildcard additions
 #file(GLOB SOURCES "src/*.cpp")
@@ -119,6 +120,9 @@ target_link_libraries(materials "${GLFW_LIB}")
 
 add_executable(lighting_maps "${LIGHTING_MAPS}")
 target_link_libraries(lighting_maps "${GLFW_LIB}")
+
+add_executable(light_casters "${LIGHT_CASTERS}")
+target_link_libraries(light_casters "${GLFW_LIB}")
 
 message("System: ${CMAKE_SYSTEM_PREFIX_PATH}")
 
