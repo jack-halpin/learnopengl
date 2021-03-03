@@ -7,6 +7,8 @@ set (learnopengl_VERSION_MINOR 0)
 set (CMAKE_CXX_STANDARD 17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 # set the source files
 set (HELLO_TRIANGLE src/Hello_Triangle/hello_triangle.cpp src/glad.cpp)
 set (HELLO_TRIANGLE_QUAD src/Hello_Triangle_QUAD/hello_triangle_quad.cpp src/glad.cpp)
@@ -31,6 +33,9 @@ set (BASIC_LIGHTING_EX3 src/Basic_Lighting_EX3/basic_lighting_ex3.cpp src/glad.c
 set (MATERIALS src/Materials/materials.cpp src/glad.cpp)
 set (LIGHTING_MAPS src/Lighting_Maps/lighting_maps.cpp src/glad.cpp)
 set (LIGHT_CASTERS src/Light_Casters/light_casters.cpp src/glad.cpp)
+set (MODEL src/Model/model.cpp src/glad.cpp src/mesh.cpp src/model.cpp)
+set (SKELETAL_ANIMATION src/Skeletal_Animation/skeletal_animation.cpp src/glad.cpp src/mesh.cpp)
+set (MULTIPLE_LIGHTS src/Multiple_Lights/multiple_lights.cpp src/glad.cpp)
 
 # using file(GLOB...) we can have wildcard additions
 #file(GLOB SOURCES "src/*.cpp")
@@ -42,7 +47,9 @@ endif(UNIX)
 if (WIN32)
     include_directories(../third_party/Include)
     link_directories(${CMAKE_BINARY_DIR}/../../third_party/Libs/GLFW)
+    link_directories(${CMAKE_BINARY_DIR}/../../third_party/Libs/ASSIMP)
     set(GLFW_LIB glfw3)
+    set(ASSIMP_LIB assimp-vc141-mt)
 endif (WIN32)
 
 # add include directories
@@ -123,6 +130,17 @@ target_link_libraries(lighting_maps "${GLFW_LIB}")
 
 add_executable(light_casters "${LIGHT_CASTERS}")
 target_link_libraries(light_casters "${GLFW_LIB}")
+
+add_executable(model "${MODEL}")
+target_link_libraries(model "${GLFW_LIB}" "${ASSIMP_LIB}")
+add_custom_command(TARGET model PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ../../third_party/Libs/ASSIMP/assimp-vc141-mt.dll $<TARGET_FILE_DIR:model>)
+
+add_executable(skeletal_animation "${SKELETAL_ANIMATION}")
+target_link_libraries(skeletal_animation "${GLFW_LIB}" "${ASSIMP_LIB}")
+add_custom_command(TARGET skeletal_animation PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ../../third_party/Libs/ASSIMP/assimp-vc141-mt.dll $<TARGET_FILE_DIR:skeletal_animation>)
+
+add_executable(multiple_lights "${MULTIPLE_LIGHTS}")
+target_link_libraries(multiple_lights "${GLFW_LIB}")
 
 message("System: ${CMAKE_SYSTEM_PREFIX_PATH}")
 
