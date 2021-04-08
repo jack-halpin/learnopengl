@@ -5,7 +5,7 @@
 #include "stb_image.h"
 
 
-#include "shader.h"
+#include "learnopengl/shader.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

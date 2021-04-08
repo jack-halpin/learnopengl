@@ -31,6 +31,7 @@ set(CHAPTERS
     2.Lighting
     3.Model_Loading
     4.Advanced_OpenGL
+    7.In_Practice
 )
 
 # Getting Started
@@ -75,6 +76,11 @@ set(3.Model_Loading
 set(4.Advanced_OpenGL
     1.1.Depth_Testing
     2.1.Stencil_Testing
+)
+
+# In Practice
+set (7.In_Practice
+    Breakout
 )
 
 foreach (CHAPTER ${CHAPTERS})

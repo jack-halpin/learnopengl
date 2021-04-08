@@ -5,8 +5,8 @@
 #include "stb_image.h"
 
 
-#include "shader.h"
-#include "camera.h"
+#include "learnopengl/shader.h"
+#include "learnopengl/camera.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
