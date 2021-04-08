@@ -11,8 +11,8 @@
 #include "assimp/postprocess.h"
 #include "assimp_glm_helpers.h"
 
-#include <mesh.h>
-#include <shader.h>
+#include <learnopengl/mesh.h>
+#include <learnopengl/shader.h>
 
 #include <string>
 #include <fstream>

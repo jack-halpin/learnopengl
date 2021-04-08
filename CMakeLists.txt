@@ -5,40 +5,11 @@ set (learnopengl_VERSION_MAJOR 1)
 set (learnopengl_VERSION_MINOR 0)
 
 set (CMAKE_CXX_STANDARD 17)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
+if(WIN32)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+endif(WIN32)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-# set the source files
-set (HELLO_TRIANGLE src/Hello_Triangle/hello_triangle.cpp src/glad.cpp)
-set (HELLO_TRIANGLE_QUAD src/Hello_Triangle_QUAD/hello_triangle_quad.cpp src/glad.cpp)
-set (HELLO_TRIANGLE_EX1 src/Hello_Triangle_EX1/hello_triangle_ex1.cpp src/glad.cpp)
-set (HELLO_TRIANGLE_EX2 src/Hello_Triangle_EX2/hello_triangle_ex2.cpp src/glad.cpp)
-set (HELLO_TRIANGLE_EX3 src/Hello_Triangle_EX3/hello_triangle_ex3.cpp src/glad.cpp)
-set (SHADERS src/Shaders/shaders.cpp src/glad.cpp)
-set (SHADERS_EX1 src/Shaders_EX1/shaders_ex1.cpp src/glad.cpp)
-set (SHADERS_EX2 src/Shaders_EX2/shaders_ex2.cpp src/glad.cpp)
-set (TEXTURES src/Textures/textures.cpp src/glad.cpp)
-set (TEXTURES_EX1 src/Textures_EX1/textures_ex1.cpp src/glad.cpp)
-set (TEXTURES_EX2 src/Textures_EX2/textures_ex2.cpp src/glad.cpp)
-set (TEXTURES_EX4 src/Textures_EX4/textures_ex4.cpp src/glad.cpp)
-set (TRANSFORMS src/Transformations/transforms.cpp src/glad.cpp)
-set (TRANSFORMS_EX2 src/Transformations_EX2/transforms_ex2.cpp src/glad.cpp)
-set (COORDS src/Coordinate_Systems/coordinate_systems.cpp src/glad.cpp)
-set (CAMERA src/Camera/camera.cpp src/glad.cpp)
-set (CAMERA_EX1 src/Camera_EX1/camera_ex1.cpp src/glad.cpp)
-set (COLORS src/Colors/colors.cpp src/glad.cpp)
-set (BASIC_LIGHTING src/Basic_Lighting/basic_lighting.cpp src/glad.cpp)
-set (BASIC_LIGHTING_EX3 src/Basic_Lighting_EX3/basic_lighting_ex3.cpp src/glad.cpp)
-set (MATERIALS src/Materials/materials.cpp src/glad.cpp)
-set (LIGHTING_MAPS src/Lighting_Maps/lighting_maps.cpp src/glad.cpp)
-set (LIGHT_CASTERS src/Light_Casters/light_casters.cpp src/glad.cpp)
-set (MODEL src/Model/model.cpp src/glad.cpp src/mesh.cpp src/model.cpp)
-set (SKELETAL_ANIMATION src/Skeletal_Animation/skeletal_animation.cpp src/glad.cpp src/mesh.cpp)
-set (MULTIPLE_LIGHTS src/Multiple_Lights/multiple_lights.cpp src/glad.cpp)
-
-# using file(GLOB...) we can have wildcard additions
-#file(GLOB SOURCES "src/*.cpp")
 
 if (UNIX)
     find_package(glfw3)
@@ -48,103 +19,94 @@ if (WIN32)
     include_directories(../third_party/Include)
     link_directories(${CMAKE_BINARY_DIR}/../../third_party/Libs/GLFW)
     link_directories(${CMAKE_BINARY_DIR}/../../third_party/Libs/ASSIMP)
-    set(GLFW_LIB glfw3)
-    set(ASSIMP_LIB assimp-vc141-mt)
+    set(LIBS glfw3 assimp-vc141-mt)
 endif (WIN32)
 
-# add include directories
 include_directories(include)
 
-# Getting started chapter
-add_executable(hello_triangle "${HELLO_TRIANGLE}") 
-target_link_libraries(hello_triangle "${GLFW_LIB}")
 
-# Getting started EBO
-add_executable(hello_triangle_quad "${HELLO_TRIANGLE_QUAD}")
-target_link_libraries(hello_triangle_quad "${GLFW_LIB}")
+# Declare Chapters
+set(CHAPTERS
+    1.Getting_Started
+    2.Lighting
+    3.Model_Loading
+    4.Advanced_OpenGL
+)
 
-# Getting started ex1
-add_executable(hello_triangle_ex1 "${HELLO_TRIANGLE_EX1}")
-target_link_libraries(hello_triangle_ex1 "${GLFW_LIB}")
+# Getting Started
+set(1.Getting_Started
+    1.1.Hello_Triangle
+    1.2.Hello_Triangle_QUAD
+    1.3.Hello_Triangle_EX1
+    1.4.Hello_Triangle_EX2
+    1.5.Hello_Triangle_EX3
+    2.1.Shaders
+    2.2.Shaders_EX1
+    2.3.Shaders_EX2
+    3.1.Textures
+    3.2.Textures_EX1
+    3.3.Textures_EX2
+    3.4.Textures_EX4
+    4.1.Transformations
+    4.2.Transformations_EX2
+    5.1.Coordinate_Systems
+    6.1.Camera
+    6.2.Camera_EX1
+)
 
-# Getting started ex2
-add_executable(hello_triangle_ex2 "${HELLO_TRIANGLE_EX2}")
-target_link_libraries(hello_triangle_ex2 "${GLFW_LIB}")
+# Lighting
+set (2.Lighting
+    1.1.Colors
+    2.1.Basic_Lighting
+    2.2.Basic_Lighting_EX3
+    3.1.Materials
+    4.1.Lighting_Maps
+    5.1.Light_Casters
+    6.1.Multiple_Lights
+)
 
-# Getting started ex3
-add_executable(hello_triangle_ex3 "${HELLO_TRIANGLE_EX3}")
-target_link_libraries(hello_triangle_ex3 "${GLFW_LIB}")
+# Model Loading
+set(3.Model_Loading
+    1.1.Model
+    2.1.Skeletal_Animation
+)
 
-# Shaders chapter
-add_executable(shaders "${SHADERS}")
-target_link_libraries(shaders "${GLFW_LIB}")
+# Advanced
+set(4.Advanced_OpenGL
+    1.1.Depth_Testing
+    2.1.Stencil_Testing
+)
 
-# Shaders ex1
-add_executable(shaders_ex1 "${SHADERS_EX1}")
-target_link_libraries(shaders_ex1 "${GLFW_LIB}")
+foreach (CHAPTER ${CHAPTERS})
+    foreach (DEMO ${${CHAPTER}})
+        file(GLOB SOURCE
+            "src/${CHAPTER}/${DEMO}/*.h"
+            "src/${CHAPTER}/${DEMO}/*.cpp"
+            "src/${CHAPTER}/${DEMO}/*.vs"
+            "src/${CHAPTER}/${DEMO}/*.fs"
+            "src/${CHAPTER}/${DEMO}/*.gs"
+            "src/glad.cpp"
+        )
 
-add_executable(shaders_ex2 "${SHADERS_EX2}")
-target_link_libraries(shaders_ex2 "${GLFW_LIB}")
+        # Setup source groups
+        file (GLOB SHADERS
+            "src/${CHAPTER}/${DEMO}/*.vs"
+            "src/${CHAPTER}/${DEMO}/*.fs"
+        )
+        file (GLOB_RECURSE HEADERS
+            "include/*.h"
+        )
+        source_group("Shaders" FILES ${SHADERS})
+        source_group("Headers" FILES ${HEADERS})
 
-add_executable(textures "${TEXTURES}")
-target_link_libraries(textures "${GLFW_LIB}")
 
-add_executable(textures_ex1 "${TEXTURES_EX1}")
-target_link_libraries(textures_ex1 "${GLFW_LIB}")
+        set(NAME "${DEMO}")
+        add_executable(${NAME} ${SOURCE} ${HEADERS})
+        target_link_libraries(${NAME} ${LIBS})
 
-add_executable(textures_ex2 "${TEXTURES_EX2}")
-target_link_libraries(textures_ex2 "${GLFW_LIB}")
+        set_target_properties (${NAME} PROPERTIES
+            FOLDER ${CHAPTER}
+        )
 
-add_executable(textures_ex4 "${TEXTURES_EX4}")
-target_link_libraries(textures_ex4 "${GLFW_LIB}")
-
-add_executable(transforms "${TRANSFORMS}")
-target_link_libraries(transforms "${GLFW_LIB}")
-
-add_executable(transforms_ex2 "${TRANSFORMS_EX2}")
-target_link_libraries(transforms_ex2 "${GLFW_LIB}")
-
-add_executable(coordinate_systems "${COORDS}")
-target_link_libraries(coordinate_systems "${GLFW_LIB}")
-
-add_executable(camera "${CAMERA}")
-target_link_libraries(camera "${GLFW_LIB}")
-
-add_executable(camera_ex1 "${CAMERA_EX1}")
-target_link_libraries(camera_ex1 "${GLFW_LIB}")
-
-add_executable(colors "${COLORS}")
-target_link_libraries(colors "${GLFW_LIB}")
-
-add_executable(basic_lighting "${BASIC_LIGHTING}")
-target_link_libraries(basic_lighting "${GLFW_LIB}")
-
-add_executable(basic_lighting_ex3 "${BASIC_LIGHTING_EX3}")
-target_link_libraries(basic_lighting_ex3 "${GLFW_LIB}")
-
-add_executable(materials "${MATERIALS}")
-target_link_libraries(materials "${GLFW_LIB}")
-
-add_executable(lighting_maps "${LIGHTING_MAPS}")
-target_link_libraries(lighting_maps "${GLFW_LIB}")
-
-add_executable(light_casters "${LIGHT_CASTERS}")
-target_link_libraries(light_casters "${GLFW_LIB}")
-
-add_executable(model "${MODEL}")
-target_link_libraries(model "${GLFW_LIB}" "${ASSIMP_LIB}")
-add_custom_command(TARGET model PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ../../third_party/Libs/ASSIMP/assimp-vc141-mt.dll $<TARGET_FILE_DIR:model>)
-
-add_executable(skeletal_animation "${SKELETAL_ANIMATION}")
-target_link_libraries(skeletal_animation "${GLFW_LIB}" "${ASSIMP_LIB}")
-add_custom_command(TARGET skeletal_animation PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ../../third_party/Libs/ASSIMP/assimp-vc141-mt.dll $<TARGET_FILE_DIR:skeletal_animation>)
-
-add_executable(multiple_lights "${MULTIPLE_LIGHTS}")
-target_link_libraries(multiple_lights "${GLFW_LIB}")
-
-message("System: ${CMAKE_SYSTEM_PREFIX_PATH}")
-
-# find the include files for the glfw lib
-
-# link to the glfw libs
-message("lib: ${GLFW_LIB}")
+    endforeach(DEMO)
+endforeach(CHAPTER)

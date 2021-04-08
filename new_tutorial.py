@@ -43,61 +43,61 @@ if __name__ == "__main__":
         if dst_path[-4:] == ".cpp":
             cpp_file_name = dst_path
 
-    # Update the CMake file
+    # # Update the CMake file
 
-    offset = 0
-    set_offset = 0
-    add_offset = 0
-    with open("CMakeLists.txt", "r+", newline="\n") as c_file:
-        line = c_file.readline()
-        while line:
-            offset += len(line.encode())
-            find_set_str = (template_project + " ").upper()
-            if line.find(find_set_str) > 0:
-                print("Set offset has been found")
-                set_offset = offset
+    # offset = 0
+    # set_offset = 0
+    # add_offset = 0
+    # with open("CMakeLists.txt", "r+", newline="\n") as c_file:
+    #     line = c_file.readline()
+    #     while line:
+    #         offset += len(line.encode())
+    #         find_set_str = (template_project + " ").upper()
+    #         if line.find(find_set_str) > 0:
+    #             print("Set offset has been found")
+    #             set_offset = offset
 
            
-            line_add_str = f"target_link_libraries({template_project.lower()} "
-            if line.find(line_add_str) >= 0:
-                print("add offset has been found")
-                add_offset = c_file.tell()
+    #         line_add_str = f"target_link_libraries({template_project.lower()} "
+    #         if line.find(line_add_str) >= 0:
+    #             print("add offset has been found")
+    #             add_offset = c_file.tell()
 
-            line = c_file.readline()
+    #         line = c_file.readline()
 
 
-        c_file.seek(add_offset)
+    #     c_file.seek(add_offset)
 
-    if set_offset > 0:
-        set_string = f"set ({new_project.upper()} src/{new_project}/{new_project.lower()}.cpp src/glad.cpp)\n"
-        with open("CMakeLists.txt", "rb+") as c_file:
-            c_file.seek(set_offset)
-            rest_of_file = c_file.read()
-            c_file.seek(set_offset)
+    # if set_offset > 0:
+    #     set_string = f"set ({new_project.upper()} src/{new_project}/{new_project.lower()}.cpp src/glad.cpp)\n"
+    #     with open("CMakeLists.txt", "rb+") as c_file:
+    #         c_file.seek(set_offset)
+    #         rest_of_file = c_file.read()
+    #         c_file.seek(set_offset)
 
-            file_as_string = rest_of_file.decode()
-            line_replace_len = file_as_string.find("\n")
+    #         file_as_string = rest_of_file.decode()
+    #         line_replace_len = file_as_string.find("\n")
 
-            c_file.write(set_string.encode("utf8"))
-            c_file.seek(set_offset + len(set_string))
-            c_file.write(rest_of_file)
+    #         c_file.write(set_string.encode("utf8"))
+    #         c_file.seek(set_offset + len(set_string))
+    #         c_file.write(rest_of_file)
 
-            if add_offset:
-                add_offset += len(set_string)
+    #         if add_offset:
+    #             add_offset += len(set_string)
     
-    if add_offset > 0:
-        add_string = f"\nadd_executable({new_project.lower()} \"${{{new_project.upper()}}}\")\ntarget_link_libraries({new_project.lower()} \"${{GLFW_LIB}}\")\n"
-        with open("CMakeLists.txt", "rb+") as c_file:
-            c_file.seek(add_offset)
-            rest_of_file = c_file.read()
-            c_file.seek(add_offset)
+    # if add_offset > 0:
+    #     add_string = f"\nadd_executable({new_project.lower()} \"${{{new_project.upper()}}}\")\ntarget_link_libraries({new_project.lower()} \"${{GLFW_LIB}}\")\n"
+    #     with open("CMakeLists.txt", "rb+") as c_file:
+    #         c_file.seek(add_offset)
+    #         rest_of_file = c_file.read()
+    #         c_file.seek(add_offset)
 
-            file_as_string = rest_of_file.decode()
-            line_replace_len = file_as_string.find("\n")
+    #         file_as_string = rest_of_file.decode()
+    #         line_replace_len = file_as_string.find("\n")
 
-            c_file.write(add_string.encode("utf8"))
-            c_file.seek(add_offset + len(add_string))
-            c_file.write(rest_of_file)
+    #         c_file.write(add_string.encode("utf8"))
+    #         c_file.seek(add_offset + len(add_string))
+    #         c_file.write(rest_of_file)
 
             
                 

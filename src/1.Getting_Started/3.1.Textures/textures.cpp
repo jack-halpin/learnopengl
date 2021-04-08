@@ -1,11 +1,24 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "learnopengl/shader.h"
 
 #include <iostream>
 #include <filesystem>
+#include <math.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+std::string createShaderPath(std::string fileName)
+{
+	std::filesystem::path currentFile(__FILE__);
+	std::filesystem::path directoryPath = currentFile.remove_filename();
+	return directoryPath.concat(fileName).generic_string();
+}
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -20,36 +33,32 @@ const unsigned int SCR_HEIGHT = 600;
 const char *vertexShaderSource =
 "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
+"layout (location = 1) in vec3 aColor;\n"
+"out vec3 vertexColor;\n"
 "void main()\n"
 "{\n"
 "    gl_Position = vec4(aPos.x, aPos.y, aPos.x, 1.0f);\n"
+"    vertexColor = aColor;\n"
 "}\0";
 
 const char *fragmentShaderSource =
 "#version 330 core\n"
 "out vec4 FragColor;\n"
+"in vec3 vertexColor;\n"
+//"uniform vec4 ourColor;\n"
 "void main()\n"
 "{\n"
-"    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"    FragColor = vec4(vertexColor, 1.0f);\n"
 "}\0";
 
 int main()
 {
-
-	auto path = std::filesystem::current_path();
-	std::cout << __FILE__ << std::endl;
-
-	std::filesystem::path p(__FILE__);
-	p.remove_filename();
-	p.concat("vertex_shader.vs");
-
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_DECORATED, GL_FALSE);
     
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // uncomment this statement to fix compilation on OS X
@@ -75,69 +84,76 @@ int main()
         return -1;
     }
     
-    // 1. Create shaders and OpenGL program
-    //Create vertex shader object and compile it
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	std::cout << "Current path is " << std::filesystem::current_path() << '\n'; // (1)
+
+    Shader s(createShaderPath("vertex_shader_texture.vs").c_str(), createShaderPath("fragment_shader_texture.fs").c_str());
     
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
     
-    // Check that the shader compiled succesffuly
-    int32_t success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
+    // CREATE TEXTURE
+    // load and create a texture
+    // -------------------------
+    unsigned int texture1, texture2;
+    // texture 1
+    // ---------
+    glGenTextures(1, &texture1);
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);    // set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load image, create texture and generate mipmaps
+    int width, height, nrChannels;
+    stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
+    // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
+    unsigned char *data = stbi_load("../resources/container.jpg", &width, &height, &nrChannels, 0);
+    if (data)
     {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR: Shader compilation failed\n" << infoLog << std::endl;
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
-    
-    //Create vertex shader object and compile it
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    
-    // Check that the shader compiled succesffuly
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
+    else
     {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR: Shader compilation failed\n" << infoLog << std::endl;
+        std::cout << "Failed to load texture" << std::endl;
     }
-    
-    // Create a shader program that links the shaders together.
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    
-    // Set the shaders for that program
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    
-    // Check that the shaders have been linked successfully
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success)
+    stbi_image_free(data);
+    // texture 2
+    // ---------
+    glGenTextures(1, &texture2);
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);    // set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load image, create texture and generate mipmaps
+    data = stbi_load("../resources/awesomeface.png", &width, &height, &nrChannels, 0);
+    if (data)
     {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR: Linking shaders in shader program\n" << infoLog << std::endl;
+        // note that the awesomeface.png has transparency and thus an alpha channel, so make sure to tell OpenGL the data type is of GL_RGBA
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
-    
-    // If it was successful we need to use the set the program to be used
-    // Once we've linked them, we no longer need the shader obejcts
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-    
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
     
     // 2. Create VBO and VAO objects
     
     // For the sake of drawing constant vertices we can define these here
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // left
-        0.5f, -0.5f, 0.0f, // right
-        0.0f,  0.5f, 0.0f  // top
+        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+        0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f , 1.0f, 0.0f, 0.0f, 0.0f, 1.0f
+    };
+    unsigned int indices[] = {  // note that we start from 0!
+        0, 1, 3,  // first Triangle
+        1, 2, 3   // second Triangle
     };
     
     // Note on vertex array objects (VAO). In the vertex shader, we must manually define
@@ -146,6 +162,10 @@ int main()
     // In the buffer the floats of the vertices are arranged as (X | Y | Z) (X | Y | Z) ...
     // The vertices in this case are tightly packed into the buffer. We have to specify this layout
     // using a VAO. We do so as such:
+    
+    // EBO: Create EBO
+    unsigned int EBO;
+    glGenBuffers(1, &EBO);
     
     // Create a VAO
     unsigned int VAO;
@@ -166,13 +186,27 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     
-    // Now we tell OpenGL how to interpret the vertex data in this VBO
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
     
+    // Now we tell OpenGL how to interpret the vertex data in this VBO
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+        (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
     // The buffer and the vertex attributes have been bound to VAO. We can unbind now.
     glBindVertexArray(0);
     
+    
+    // Note about assigning texture units. Default assigned unit to a sampler2d (shader)
+    // default active unit is always 0.
+    s.use();
+    glUniform1i(glGetUniformLocation(s.ID, "texture1"), 0);
+    glUniform1i(glGetUniformLocation(s.ID, "texture2"), 1);
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -185,14 +219,27 @@ int main()
         // -------------------------------------------------------------------------------
         
         // NOTE: we have to say which program and which VAO to use everytime we render.
-        glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
+        
+//        float timeValue = glfwGetTime();
+//        float greenValue = sin(timeValue) / 2.0f + 0.5f;
+//        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+//        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+//
         
         glClearColor(0.2f, 0.2f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2);
+        
+        s.use();
+        glBindVertexArray(VAO);
+        
+        
         // Draw the triangle.
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         
         glfwSwapBuffers(window);
         glfwPollEvents();
