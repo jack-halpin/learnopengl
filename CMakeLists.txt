@@ -103,7 +103,7 @@ foreach (CHAPTER ${CHAPTERS})
             "include/*.h"
         )
         source_group("Shaders" FILES ${SHADERS})
-        source_group("Headers" FILES ${HEADERS})
+        source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${HEADERS})
 
 
         set(NAME "${DEMO}")
