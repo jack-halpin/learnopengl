@@ -12,12 +12,24 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "breakout/GameLevel.h"
+#include "BallObject.h"
 // Represents the current state of the game
 enum GameState {
 	GAME_ACTIVE,
 	GAME_MENU,
 	GAME_WIN
 };
+
+enum Direction {
+	UP,
+	RIGHT,
+	DOWN,
+	LEFT
+};
+
+typedef std::tuple<bool, Direction, glm::vec2> Collision;
+
+
 
 // Game holds all game-related state and functionality.
 // Combines all game-related data into a single class for
@@ -40,6 +52,15 @@ public:
 	void ProcessInput(float dt);
 	void Update(float dt);
 	void Render();
+
+
+	Collision CheckCollision(BallObject &one, GameObject &two);
+	bool CheckCollision(GameObject &one, GameObject &two);
+	void DoCollisions();
+	Direction VectorDirection(glm::vec2 target);
+
+	void ResetLevel();
+	void ResetPlayer();
 };
 
 #endif
