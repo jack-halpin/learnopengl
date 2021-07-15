@@ -49,7 +49,7 @@ Game::~Game()
 void Game::Init()
 {
 	// Create player
-	ResourceManager::LoadTexture("../resources/paddle.png", true, "paddle");
+	ResourceManager::LoadTexture("../../resources/paddle.png", true, "paddle");
 	glm::vec2 playerPos = glm::vec2(
 		this->Width / 2.0f - PLAYER_SIZE.x / 2.0f,
 		this->Height - PLAYER_SIZE.y
@@ -68,14 +68,14 @@ void Game::Init()
     // set render-specific controls
     Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
     // load textures
-    ResourceManager::LoadTexture("../resources/awesomeface.png", true, "face");
-	ResourceManager::LoadTexture("../resources/background.jpg", false, "background");
-	ResourceManager::LoadTexture("../resources/awesomeface.png", true, "face");
-	ResourceManager::LoadTexture("../resources/block.png", false, "block");
-	ResourceManager::LoadTexture("../resources/block_solid.png", false, "block_solid");
+    ResourceManager::LoadTexture("../../resources/awesomeface.png", true, "face");
+	ResourceManager::LoadTexture("../../resources/background.jpg", false, "background");
+	ResourceManager::LoadTexture("../../resources/awesomeface.png", true, "face");
+	ResourceManager::LoadTexture("../../resources/block.png", false, "block");
+	ResourceManager::LoadTexture("../../resources/block_solid.png", false, "block_solid");
 	// Load 
 	GameLevel one;
-	one.Load("../resources/levels/one.lvl", this->Width, this->Height / 2);
+	one.Load("../../resources/levels/one.lvl", this->Width, this->Height / 2);
 
 	Levels.push_back(one);
 	this->Level = 0;
@@ -103,13 +103,13 @@ void Game::Update(float dt)
 void Game::ResetLevel()
 {
 	if (this->Level == 0)
-		this->Levels[0].Load("../resources/levels/one.lvl", this->Width, this->Height / 2);
+		this->Levels[0].Load("../../resources/levels/one.lvl", this->Width, this->Height / 2);
 	else if (this->Level == 1)
-		this->Levels[1].Load("../resources/levels/two.lvl", this->Width, this->Height / 2);
+		this->Levels[1].Load("../../resources/levels/two.lvl", this->Width, this->Height / 2);
 	else if (this->Level == 2)
-		this->Levels[2].Load("../resources/levels/three.lvl", this->Width, this->Height / 2);
+		this->Levels[2].Load("../../resources/levels/three.lvl", this->Width, this->Height / 2);
 	else if (this->Level == 3)
-		this->Levels[3].Load("../resources/levels/four.lvl", this->Width, this->Height / 2);
+		this->Levels[3].Load("../../resources/levels/four.lvl", this->Width, this->Height / 2);
 }
 
 void Game::ResetPlayer()

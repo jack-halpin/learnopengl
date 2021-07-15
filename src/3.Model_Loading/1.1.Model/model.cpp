@@ -93,7 +93,7 @@ int main()
 
     // load models
     // -----------
-    Model ourModel("../resources/backpack/backpack.obj");
+    Model ourModel("../../resources/backpack/backpack.obj");
 
     
     // draw in wireframe

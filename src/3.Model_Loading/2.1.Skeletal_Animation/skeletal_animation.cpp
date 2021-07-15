@@ -91,9 +91,9 @@ int main()
 
     // load models
     // -----------
-    Model ourModel("../resources/vampire/dancing_vampire.dae");
+    Model ourModel("../../resources/vampire/dancing_vampire.dae");
 
-    Animation danceAnimation("../resources/vampire/dancing_vampire.dae", &ourModel);
+    Animation danceAnimation("../../resources/vampire/dancing_vampire.dae", &ourModel);
     Animator animator(&danceAnimation);
 
     

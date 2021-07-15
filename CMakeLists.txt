@@ -9,6 +9,10 @@ if(WIN32)
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 endif(WIN32)
 
+if(APPLE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "11.1")
+endif(APPLE)
+
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 if (UNIX)
@@ -80,6 +84,7 @@ set(3.Model_Loading
 set(4.Advanced_OpenGL
     1.1.Depth_Testing
     2.1.Stencil_Testing
+    3.1.Blending
 )
 
 # In Practice
