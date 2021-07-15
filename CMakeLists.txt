@@ -12,8 +12,12 @@ endif(WIN32)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 if (UNIX)
+    include_directories(../third_party/glfw/include)
+    include_directories(../third_party/assimp-5.0.1/include)
+    link_directories(/usr/local/lib)
+
     find_package(glfw3)
-    set(GLFW_LIB glfw)
+    set(LIBS glfw assimp)
 endif(UNIX)
 if (WIN32)
     include_directories(../third_party/Include)
