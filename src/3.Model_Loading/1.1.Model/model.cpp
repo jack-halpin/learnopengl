@@ -3,7 +3,6 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -15,6 +14,7 @@
 #include <filesystem>
 
 #include <iostream>
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -80,8 +80,8 @@ int main()
         return -1;
     }
 
-    // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-    stbi_set_flip_vertically_on_load(true);
+	// For this we don't want the image to be flipped
+    stbi_set_flip_vertically_on_load(false);
 
     // configure global opengl state
     // -----------------------------
