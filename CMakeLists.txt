@@ -123,5 +123,10 @@ foreach (CHAPTER ${CHAPTERS})
             FOLDER ${CHAPTER}
         )
 
+        if (WIN32)
+            set_property(TARGET ${NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/$<CONFIG>")
+        endif (WIN32)
+
+
     endforeach(DEMO)
 endforeach(CHAPTER)
