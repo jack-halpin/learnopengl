@@ -44,6 +44,13 @@ float lastFrame = 0.0f; // Time of last frame
 
 glm::vec3 lightPos(1.2f, 0.0f, 2.0f);
 
+std::string createShaderPath(std::string fileName)
+{
+	std::filesystem::path currentFile(__FILE__);
+	std::filesystem::path directoryPath = currentFile.remove_filename();
+	return directoryPath.concat(fileName).generic_string();
+}
+
 
 int main()
 {
@@ -131,8 +138,8 @@ int main()
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
 
-	Shader objectShader("../src/shaders/vertex_shader_materials.vs", "../src/shaders/fragment_shader_materials.fs");
-	Shader lightShader("../src/shaders/vertex_shader_materials.vs", "../src/shaders/fragment_shader_light_lighting.fs");
+	Shader objectShader(createShaderPath("vertex_shader_materials.vs").c_str(), createShaderPath("fragment_shader_materials.fs").c_str());
+	Shader lightShader(createShaderPath("vertex_shader_materials.vs").c_str(), createShaderPath("fragment_shader_light_lighting.fs").c_str());
 
 
 	// Create the toyVAO
