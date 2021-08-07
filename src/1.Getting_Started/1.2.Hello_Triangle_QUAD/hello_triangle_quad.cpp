@@ -180,6 +180,8 @@ int main()
     // The buffer and the vertex attributes have been bound to VAO. We can unbind now.
     glBindVertexArray(0);
     
+
+	glEnable(GL_BLEND);
     
     // render loop
     // -----------
