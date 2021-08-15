@@ -85,6 +85,7 @@ set(4.Advanced_OpenGL
     1.1.Depth_Testing
     2.1.Stencil_Testing
     3.1.Blending
+    4.1.Face_Culling
 )
 
 # In Practice
