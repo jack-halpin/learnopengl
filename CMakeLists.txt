@@ -86,6 +86,7 @@ set(4.Advanced_OpenGL
     2.1.Stencil_Testing
     3.1.Blending
     4.1.Face_Culling
+    5.1.Framebuffer
 )
 
 # In Practice
