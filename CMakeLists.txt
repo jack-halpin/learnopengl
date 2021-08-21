@@ -87,6 +87,7 @@ set(4.Advanced_OpenGL
     3.1.Blending
     4.1.Face_Culling
     5.1.Framebuffer
+	5.1.Framebuffer_EX1
 )
 
 # In Practice
